@@ -53,6 +53,30 @@ class GildedRoseTest(unittest.TestCase):
         gilded_rose.update_quality()
         assert items[0].quality == 0, "Backstage passes quality should drop to 0 after the concert."
 
+    def test_conjured_item_degrades_twice_before_sell_in(self):
+        items = [Item("Conjured Mana Cake", 3, 6)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        assert items[0].quality == 4, "Conjured item quality should degrade by 2 before the sell-in date."
+
+    def test_conjured_item_degrades_twice_after_sell_in(self):
+        items = [Item("Conjured", 0, 6)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        assert items[0].quality == 2, "Conjured item quality should degrade by 4 after the sell-in date has passed."
+
+    def test_conjured_item_quality_never_negative(self):
+        items = [Item("Conjured", 0, 1)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        assert items[0].quality == 0, "Conjured item quality should never be negative."
+
+    def test_conjured_item_fast_degrade_does_not_exceed_bounds(self):
+        items = [Item("Conjured", 3, 50)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        assert items[0].quality <= 50, "Conjured item quality should not exceed 50."
+
 
 if __name__ == '__main__':
     unittest.main()
